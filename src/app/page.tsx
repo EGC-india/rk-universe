@@ -3,13 +3,45 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
-import { Video, Palette, Feather, Star, Award, Crown, Globe } from "lucide-react";
-import { useRef } from "react";
+import { Video, Palette, Feather, Star, Award, Crown, Globe, Car, ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import useEmblaCarousel from "embla-carousel-react";
 
 export default function Home() {
   const container = useRef(null);
+  
+  // Initialize Embla Carousel with loop and snap to start
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    onSelect();
+    
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi]);
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -37,6 +69,53 @@ export default function Home() {
       ease: "power3.out",
     }, "-=0.5");
   }, { scope: container });
+
+  const slides = [
+    {
+      id: 'green-chillies',
+      title: 'GREEN CHILLIES',
+      subtitle: 'Entertainment And Media',
+      desc: 'Driven by powerful stories and cinematic excellence',
+      image: '/1.png',
+      link: 'https://www.instagram.com/greenchillies.media/',
+      linkText: 'ENTER WORLD',
+      icon: Video,
+      color: '#8a9a5b'
+    },
+    {
+      id: 'rk-art',
+      title: 'RK ART COLLECTION',
+      subtitle: 'Digital & Fine Arts',
+      desc: 'A curated collection of original artworks that reflect emotion, imagination and timeless beauty.',
+      image: '/2.png',
+      link: 'https://www.instagram.com/rkart.world/',
+      linkText: 'ENTER GALLERY',
+      icon: Palette,
+      color: '#d4af37'
+    },
+    {
+      id: 'rk-chronicles',
+      title: 'RK CHRONICLES',
+      subtitle: 'Literature & Stories',
+      desc: 'Step into our digital library and read original novels and stories from the RK Universe.',
+      image: '/3.png',
+      link: 'https://www.instagram.com/therkchronicles/',
+      linkText: 'ENTER LIBRARY',
+      icon: Feather,
+      color: '#d4af37'
+    },
+    {
+      id: 'rk-mobility',
+      title: 'RK MOBILITY',
+      subtitle: 'Future of Transportation',
+      desc: 'Redefining automotive design, performance, and the future of mobility.',
+      image: '/car.png',
+      link: 'https://www.instagram.com/rkmobility/',
+      linkText: 'EXPLORE MOBILITY',
+      icon: Car,
+      color: '#d4af37'
+    }
+  ];
 
   return (
     <div ref={container} className="flex flex-col min-h-screen bg-[#050505] text-white font-sans selection:bg-[#d4af37] selection:text-black relative">
@@ -73,82 +152,99 @@ export default function Home() {
           </div>
         </div>
 
-        {/* The 3 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 sm:px-8 max-w-7xl w-full mx-auto mb-16">
-          {/* Card 1 */}
-          <div className="card-item">
-            <div className="group relative flex flex-col h-[520px] border border-white/10 rounded-sm overflow-hidden bg-black transition-all duration-500 hover:border-[#8a9a5b]/50 hover:shadow-[0_0_30px_rgba(138,154,91,0.15)] hover:-translate-y-2">
-              <div className="relative h-[55%] w-full">
-                <div className="absolute inset-0 opacity-80 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105">
-                  <Image src="/1.png" alt="Green Chillies" fill className="object-cover" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-              </div>
-              
-              <div className="relative h-[45%] flex flex-col items-center text-center px-8 pb-8 z-10 pt-10">
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full border border-[#8a9a5b] flex items-center justify-center text-[#8a9a5b] bg-black shadow-[0_0_15px_rgba(138,154,91,0.2)] transition-transform duration-500 group-hover:scale-110">
-                  <Video className="w-6 h-6 fill-current" />
-                </div>
-                <h3 className="text-[#8a9a5b] font-['--font-cinzel'] text-[22px] font-bold tracking-wider mb-1 mt-1 drop-shadow-[0_0_10px_rgba(138,154,91,0.2)]">GREEN CHILLIES</h3>
-                <p className="text-[#8a9a5b]/90 text-[10px] tracking-[0.2em] font-medium mb-4 uppercase">Entertainment And Media</p>
-                <p className="text-white/70 text-xs leading-[1.8] mb-auto font-light">
-                  Driven by powerful stories and cinematic excellence
-                </p>
-                <a href="https://www.instagram.com/greenchillies.media/" target="_blank" rel="noopener noreferrer" className="border border-[#8a9a5b]/30 text-[#8a9a5b] text-[11px] font-semibold tracking-widest px-8 py-2.5 hover:bg-[#8a9a5b]/10 transition-colors uppercase mt-6 group-hover:border-[#8a9a5b]/80 flex items-center gap-2">
-                  ENTER WORLD <span className="text-[14px] leading-none">&rsaquo;</span>
-                </a>
-              </div>
+        {/* The Carousel */}
+        <div className="relative w-full max-w-7xl mx-auto mb-16 px-4 sm:px-8 group">
+          
+          {/* Navigation Arrows */}
+          <button 
+            onClick={scrollPrev}
+            className="absolute left-0 lg:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 border border-white/20 rounded-full flex items-center justify-center text-white hover:text-[#d4af37] hover:border-[#d4af37] transition-all backdrop-blur-md sm:flex"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          
+          <button 
+            onClick={scrollNext}
+            className="absolute right-0 lg:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/50 border border-white/20 rounded-full flex items-center justify-center text-white hover:text-[#d4af37] hover:border-[#d4af37] transition-all backdrop-blur-md sm:flex"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Embla Viewport */}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex -ml-6">
+              {slides.map((slide) => {
+                const Icon = slide.icon;
+                return (
+                  <div key={slide.id} className="card-item flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-6">
+                    <div 
+                      className="group/card relative flex flex-col h-[520px] border border-white/10 rounded-sm overflow-hidden bg-black transition-all duration-500 hover:-translate-y-2"
+                      style={{ '--hover-color': slide.color } as React.CSSProperties}
+                    >
+                      <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ boxShadow: `0 0 30px ${slide.color}20`, border: `1px solid ${slide.color}80` }}></div>
+                      
+                      <div className="relative h-[55%] w-full">
+                        <div className="absolute inset-0 opacity-80 transition-all duration-700 group-hover/card:opacity-100 group-hover/card:scale-105">
+                          <Image src={slide.image} alt={slide.title} fill className="object-cover" />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                      </div>
+                      
+                      <div className="relative h-[45%] flex flex-col items-center text-center px-6 pb-8 z-10 pt-10">
+                        <div 
+                          className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full border bg-black transition-transform duration-500 group-hover/card:scale-110 flex items-center justify-center"
+                          style={{ borderColor: slide.color, color: slide.color, boxShadow: `0 0 15px ${slide.color}30` }}
+                        >
+                          <Icon className="w-6 h-6 fill-current" />
+                        </div>
+                        <h3 
+                          className="font-['--font-cinzel'] text-[20px] xl:text-[22px] font-bold tracking-wider mb-1 mt-1"
+                          style={{ color: slide.color, textShadow: `0 0 10px ${slide.color}30` }}
+                        >
+                          {slide.title}
+                        </h3>
+                        {slide.subtitle && (
+                          <p 
+                            className="text-[9px] xl:text-[10px] tracking-[0.2em] font-medium mb-4 uppercase"
+                            style={{ color: `${slide.color}e6` }}
+                          >
+                            {slide.subtitle}
+                          </p>
+                        )}
+                        <p className="text-white/70 text-[11px] xl:text-xs leading-[1.8] mb-auto font-light">
+                          {slide.desc}
+                        </p>
+                        <a 
+                          href={slide.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="border text-[10px] xl:text-[11px] font-semibold tracking-widest px-6 xl:px-8 py-2.5 transition-colors uppercase mt-6 flex items-center gap-2 group-hover/card:bg-white/5"
+                          style={{ borderColor: `${slide.color}50`, color: slide.color }}
+                        >
+                          {slide.linkText} <span className="text-[14px] leading-none">&rsaquo;</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Card 2 */}
-          <div className="card-item">
-            <div className="group relative flex flex-col h-[520px] border border-white/10 rounded-sm overflow-hidden bg-black transition-all duration-500 hover:border-[#d4af37]/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] hover:-translate-y-2">
-              <div className="relative h-[55%] w-full">
-                <div className="absolute inset-0 opacity-80 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105">
-                  <Image src="/2.png" alt="RK Art Collection" fill className="object-cover" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-              </div>
-              
-              <div className="relative h-[45%] flex flex-col items-center text-center px-8 pb-8 z-10 pt-10">
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full border border-[#d4af37] flex items-center justify-center text-[#d4af37] bg-black shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-transform duration-500 group-hover:scale-110">
-                  <Palette className="w-6 h-6 fill-current" />
-                </div>
-                <h3 className="text-[#d4af37] font-['--font-cinzel'] text-[22px] font-bold tracking-wider mb-4 mt-1 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]">RK ART COLLECTION</h3>
-                <p className="text-white/70 text-xs leading-[1.8] mb-auto font-light">
-                  A curated collection of original artworks that reflect emotion, imagination and timeless beauty.
-                </p>
-                <a href="https://www.instagram.com/rkart.world/" target="_blank" rel="noopener noreferrer" className="border border-[#d4af37]/30 text-[#d4af37] text-[11px] font-semibold tracking-widest px-8 py-2.5 hover:bg-[#d4af37]/10 transition-colors uppercase mt-6 group-hover:border-[#d4af37]/80 flex items-center gap-2">
-                  ENTER GALLERY <span className="text-[14px] leading-none">&rsaquo;</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="card-item">
-            <div className="group relative flex flex-col h-[520px] border border-white/10 rounded-sm overflow-hidden bg-black transition-all duration-500 hover:border-[#d4af37]/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] hover:-translate-y-2">
-              <div className="relative h-[55%] w-full">
-                <div className="absolute inset-0 opacity-80 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105">
-                  <Image src="/3.png" alt="RK Chronicles" fill className="object-cover" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-              </div>
-              
-              <div className="relative h-[45%] flex flex-col items-center text-center px-8 pb-8 z-10 pt-10">
-                <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full border border-[#d4af37] flex items-center justify-center text-[#d4af37] bg-black shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-transform duration-500 group-hover:scale-110">
-                  <Feather className="w-6 h-6 fill-current" />
-                </div>
-                <h3 className="text-[#d4af37] font-['--font-cinzel'] text-[22px] font-bold tracking-wider mb-4 mt-1 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]">RK CHRONICLES</h3>
-                <p className="text-white/70 text-xs leading-[1.8] mb-auto font-light">
-                  Step into our digital library and read original novels and stories from the RK Universe.
-                </p>
-                <a href="https://www.instagram.com/therkchronicles/" target="_blank" rel="noopener noreferrer" className="border border-[#d4af37]/30 text-[#d4af37] text-[11px] font-semibold tracking-widest px-8 py-2.5 hover:bg-[#d4af37]/10 transition-colors uppercase mt-6 group-hover:border-[#d4af37]/80 flex items-center gap-2">
-                  ENTER LIBRARY <span className="text-[14px] leading-none">&rsaquo;</span>
-                </a>
-              </div>
-            </div>
+          {/* Dots Pagination */}
+          <div className="flex justify-center gap-3 mt-8">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === selectedIndex ? 'bg-[#d4af37] w-6' : 'bg-white/30 hover:bg-white/60'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
 
