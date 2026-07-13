@@ -12,8 +12,16 @@ import useEmblaCarousel from "embla-carousel-react";
 export default function Home() {
   const container = useRef(null);
   
-  // Initialize Embla Carousel with loop and snap to start
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+  // Initialize Embla Carousel with responsive scrolling
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true, 
+    align: "start",
+    slidesToScroll: 1, // 1 by 1 on mobile
+    breakpoints: {
+      '(min-width: 1024px)': { slidesToScroll: 2 } // 2 by 2 on large screens
+    }
+  });
+  
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const scrollPrev = useCallback(() => {
@@ -33,8 +41,10 @@ export default function Home() {
     const onSelect = () => {
       setSelectedIndex(emblaApi.selectedScrollSnap());
     };
+    
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
+    
     onSelect();
     
     return () => {
@@ -70,7 +80,7 @@ export default function Home() {
     }, "-=0.5");
   }, { scope: container });
 
-  const slides = [
+  const originalSlides = [
     {
       id: 'green-chillies',
       title: 'GREEN CHILLIES',
@@ -116,6 +126,9 @@ export default function Home() {
       color: '#d4af37'
     }
   ];
+
+  // Duplicating slides to ensure smooth infinite loop on larger screens where 3 items are visible
+  const slides = [...originalSlides, ...originalSlides.map(s => ({...s, id: s.id + '-dup'}))];
 
   return (
     <div ref={container} className="flex flex-col min-h-screen bg-[#050505] text-white font-sans selection:bg-[#d4af37] selection:text-black relative">
@@ -233,18 +246,26 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Dots Pagination */}
+          {/* Dots Pagination - Fixed to 2 dots */}
           <div className="flex justify-center gap-3 mt-8">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => scrollTo(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === selectedIndex ? 'bg-[#d4af37] w-6' : 'bg-white/30 hover:bg-white/60'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+            {[0, 1].map((index) => {
+              // Calculate which original slide we are viewing (0-3) based on selected index
+              // We check how many snaps are created to adapt the calculation
+              const totalSnaps = emblaApi ? emblaApi.scrollSnapList().length : 8;
+              const originalIndex = (selectedIndex % totalSnaps) % 4;
+              const isActive = Math.floor(originalIndex / 2) === index;
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => scrollTo(index * (totalSnaps / 2))}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    isActive ? 'bg-[#d4af37] w-6' : 'bg-white/30 hover:bg-white/60'
+                  }`}
+                  aria-label={`Go to slide group ${index + 1}`}
+                />
+              );
+            })}
           </div>
         </div>
 
