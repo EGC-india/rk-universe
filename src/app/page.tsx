@@ -3,11 +3,20 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
-import { Video, Palette, Feather, Star, Award, Crown, Globe, Car, ChevronLeft, ChevronRight } from "lucide-react";
+import { Video, Palette, Feather, Star, Award, Crown, Globe, Car, ChevronLeft, ChevronRight, Home as HomeIcon } from "lucide-react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+
+const InstagramIcon = ({ className, strokeWidth = 2 }: { className?: string, strokeWidth?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
 
 export default function Home() {
   const container = useRef(null);
@@ -20,9 +29,10 @@ export default function Home() {
     breakpoints: {
       '(min-width: 1024px)': { slidesToScroll: 2 } // 2 by 2 on large screens
     }
-  });
+  }, [Autoplay({ delay: 3000, stopOnInteraction: false })]);
   
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showProfiles, setShowProfiles] = useState(false);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -123,6 +133,17 @@ export default function Home() {
       link: 'https://www.instagram.com/rkmobility/',
       linkText: 'EXPLORE MOBILITY',
       icon: Car,
+      color: '#d4af37'
+    },
+    {
+      id: 'rk-mansion',
+      title: 'RK MANSION',
+      subtitle: 'Real Estate & Lifestyle',
+      desc: 'Experience the epitome of luxury living and architectural brilliance.',
+      image: '/rahil Khan mansion.png',
+      link: 'https://www.instagram.com/rahilkhanmaison/',
+      linkText: 'EXPLORE MANSION',
+      icon: HomeIcon,
       color: '#d4af37'
     }
   ];
@@ -246,19 +267,19 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Dots Pagination - Fixed to 2 dots */}
+          {/* Dots Pagination - Dynamic */}
           <div className="flex justify-center gap-3 mt-8">
-            {[0, 1].map((index) => {
-              // Calculate which original slide we are viewing (0-3) based on selected index
+            {[0, 1, 2].map((index) => {
+              // Calculate which original slide we are viewing (0-4) based on selected index
               // We check how many snaps are created to adapt the calculation
-              const totalSnaps = emblaApi ? emblaApi.scrollSnapList().length : 8;
-              const originalIndex = (selectedIndex % totalSnaps) % 4;
+              const totalSnaps = emblaApi ? emblaApi.scrollSnapList().length : 10;
+              const originalIndex = (selectedIndex % totalSnaps) % 5;
               const isActive = Math.floor(originalIndex / 2) === index;
               
               return (
                 <button
                   key={index}
-                  onClick={() => scrollTo(index * (totalSnaps / 2))}
+                  onClick={() => scrollTo(index * Math.floor(totalSnaps / 5) * 2)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     isActive ? 'bg-[#d4af37] w-6' : 'bg-white/30 hover:bg-white/60'
                   }`}
@@ -307,6 +328,120 @@ export default function Home() {
             <div className="w-12 h-[1px] bg-gradient-to-l from-transparent via-[#d4af37]/70 to-[#d4af37]"></div>
           </div>
         </div>
+
+        {/* Instagram Banner */}
+        <div className="w-full max-w-5xl mx-auto px-4 mb-20 mt-4">
+          <div className="relative border border-[#d4af37]/60 rounded-xl overflow-hidden bg-[#0a0a0a] flex flex-col md:flex-row items-center justify-between p-8 md:p-12 shadow-[0_0_30px_rgba(212,175,55,0.15)] group hover:border-[#d4af37] transition-all duration-500">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#d4af37]/10 to-transparent opacity-50 pointer-events-none"></div>
+            
+            {/* Left - Icon */}
+            <div className="relative flex-shrink-0 mb-8 md:mb-0 md:mr-12 flex justify-center items-center md:pl-8">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[3px] border-[#d4af37] flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.4)] relative bg-black">
+                <div className="absolute inset-0 rounded-full border border-[#d4af37] animate-[ping_3s_ease-in-out_infinite] opacity-20"></div>
+                <InstagramIcon className="w-16 h-16 md:w-20 md:h-20 text-[#d4af37]" strokeWidth={1.5} />
+              </div>
+            </div>
+
+            {/* Right - Content (Text Centered) */}
+            <div className="flex-1 flex flex-col items-center text-center z-10 w-full md:pr-8">
+              <div className="flex items-center gap-3 mb-3 justify-center w-full">
+                <div className="w-8 h-[1px] bg-gradient-to-r from-transparent to-[#d4af37]/70"></div>
+                <span className="text-[#d4af37] text-[10px] sm:text-xs tracking-[0.3em] font-semibold uppercase flex items-center gap-2">
+                  <Crown className="w-3 h-3" /> FOLLOW
+                </span>
+                <div className="w-8 h-[1px] bg-gradient-to-l from-transparent to-[#d4af37]/70"></div>
+              </div>
+              
+              <h2 className="text-3xl md:text-5xl font-['--font-cinzel'] text-[#d4af37] font-bold tracking-wider mb-3 drop-shadow-[0_2px_10px_rgba(212,175,55,0.4)]">
+                RK UNIVERSE
+              </h2>
+              
+              <div className="flex items-center gap-3 mb-6 justify-center w-full">
+                <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-white/30"></div>
+                <span className="text-white/90 text-[11px] md:text-xs tracking-[0.2em] font-medium uppercase">
+                  ON INSTAGRAM
+                </span>
+                <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-white/30"></div>
+              </div>
+              
+              <p className="text-white/70 text-xs md:text-sm max-w-md mb-8 leading-relaxed font-light text-center">
+                Discover stories, artworks, behind-the-scenes and exclusive moments from our universe.
+              </p>
+              
+              <button 
+                onClick={() => setShowProfiles(true)}
+                className="border border-[#d4af37] text-[#d4af37] px-6 py-3 rounded-sm font-semibold tracking-widest text-[11px] md:text-xs hover:bg-[#d4af37] hover:text-black transition-all duration-300 flex items-center gap-3 uppercase group/btn cursor-pointer mx-auto"
+              >
+                <InstagramIcon className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                FOLLOW US ON INSTAGRAM 
+                <span className="text-lg leading-none ml-1 group-hover/btn:translate-x-1 transition-transform">&raquo;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Instagram Profiles Modal */}
+        {showProfiles && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <div className="bg-[#050505] border border-[#d4af37]/40 rounded-xl max-w-lg w-full p-6 sm:p-8 shadow-[0_0_50px_rgba(212,175,55,0.15)] relative overflow-hidden transition-all">
+              {/* Decorative elements */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50"></div>
+              
+              <button 
+                onClick={() => setShowProfiles(false)}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+              
+              <div className="text-center mb-8 mt-2">
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-12 rounded-full border border-[#d4af37] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)] bg-black">
+                    <InstagramIcon className="w-6 h-6 text-[#d4af37]" />
+                  </div>
+                </div>
+                <h3 className="text-[#d4af37] font-['--font-cinzel'] text-xl sm:text-2xl font-bold tracking-widest mb-2">OUR UNIVERSES</h3>
+                <p className="text-white/60 text-[10px] sm:text-xs tracking-[0.2em] uppercase">Select a profile to follow</p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {originalSlides.map((slide) => {
+                  const Icon = slide.icon;
+                  const handleMatch = slide.link.match(/instagram\.com\/([^/]+)/);
+                  const handle = handleMatch ? `@${handleMatch[1].replace(/\//g, '')}` : '@instagram';
+                  
+                  return (
+                    <a 
+                      key={slide.id}
+                      href={slide.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-3 sm:p-4 rounded-lg border border-white/5 bg-white/[0.02] hover:border-[#d4af37]/50 hover:bg-white/5 transition-all duration-300 group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div 
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border flex items-center justify-center bg-black transition-transform duration-300 group-hover:scale-110"
+                          style={{ borderColor: `${slide.color}50`, color: slide.color, boxShadow: `0 0 10px ${slide.color}20` }}
+                        >
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </div>
+                        <div className="flex flex-col text-left">
+                          <span className="text-white font-['--font-cinzel'] text-sm sm:text-base font-bold tracking-wider group-hover:text-[#d4af37] transition-colors">{slide.title}</span>
+                          <span className="text-white/50 text-[9px] sm:text-[10px] tracking-widest uppercase mt-0.5">{handle}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 group-hover:border-[#d4af37]/50 group-hover:bg-[#d4af37]/10 transition-all">
+                        <InstagramIcon className="w-3 h-3 sm:w-4 sm:h-4 text-white/50 group-hover:text-[#d4af37] transition-colors" />
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
