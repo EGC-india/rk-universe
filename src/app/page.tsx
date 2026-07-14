@@ -136,13 +136,13 @@ export default function Home() {
       color: '#d4af37'
     },
     {
-      id: 'rk-mansion',
-      title: 'RK MANSION',
+      id: 'rk-masion',
+      title: 'RK MASION',
       subtitle: 'Real Estate & Lifestyle',
       desc: 'Experience the epitome of luxury living and architectural brilliance.',
-      image: '/rahil Khan mansion.png',
+      image: '/rahil Khan masion.png',
       link: 'https://www.instagram.com/rahilkhanmaison/',
-      linkText: 'EXPLORE MANSION',
+      linkText: 'EXPLORE MASION',
       icon: HomeIcon,
       color: '#d4af37'
     }
