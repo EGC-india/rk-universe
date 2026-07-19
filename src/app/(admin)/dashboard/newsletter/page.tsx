@@ -38,7 +38,7 @@ export default async function NewsletterPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              subscribers.map((sub) => (
+              subscribers.map((sub: { id: string; email: string; createdAt: Date }) => (
                 <TableRow key={sub.id} className="border-white/10 hover:bg-white/5 text-white/80">
                   <TableCell>{new Date(sub.createdAt).toLocaleString()}</TableCell>
                   <TableCell className="font-medium text-white">{sub.email}</TableCell>
