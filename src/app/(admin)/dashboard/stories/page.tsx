@@ -41,7 +41,7 @@ export default async function StoriesPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              stories.map((story) => (
+              stories.map((story: { id: string; createdAt: Date; fullName: string; category: string; city: string; status: string }) => (
                 <TableRow key={story.id} className="border-white/10 hover:bg-white/5 text-white/80">
                   <TableCell>{new Date(story.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="font-medium text-white">{story.fullName}</TableCell>
