@@ -42,7 +42,10 @@ export async function PATCH(
     });
 
     return NextResponse.json(updatedStory);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return NextResponse.json({ error: 'Story not found' }, { status: 404 });
+    }
     console.error('Error updating story:', error);
     return NextResponse.json({ error: 'Failed to update story' }, { status: 500 });
   }
